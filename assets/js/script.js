@@ -217,6 +217,56 @@ for (var i = 0; i < tasks.length; i++) {
 var saveTasks = function() {
 localStorage.setItem("tasks", JSON.stringify(tasks));
 }
+var loadTasks = function() {
+    // if there are no tasks in storage, make tasks an empty array
+    if (!JSON.parse(localStorage.getItem("tasks"))) {
+    tasks = []
+    return false
+}
+// if there are tasks in local storage, fill the task array with them
+else {
+    tasks = JSON.parse(localStorage.getItem("tasks"))
+}
 
+    // iterates through a tasks array and creates task elements on the page from it
+    for (i=0; i<tasks.length; i++) {
+        tasks[i].id = taskIdCounter
+        var listItemEl = document.createElement("li");
+        listItemEl.className = "task-item";
+      
+        // add task id as a custom attribute
+        listItemEl.setAttribute("data-task-id", tasks[i].id);
+      
+        // create div to hold task info and add to list item
+        var taskInfoEl = document.createElement("div");
+        // give it a class name
+        taskInfoEl.className = "task-info";
+        // add HTML content to div
+        taskInfoEl.innerHTML =
+          "<h3 class='task-name'>" +
+          tasks[i].name +
+          "</h3><span class='task-type'>" +
+          tasks[i].type +
+          "</span>";
+      
+        listItemEl.appendChild(taskInfoEl);
+
+        var taskActionsEl = createTaskActions(tasks[i].id);
+        listItemEl.appendChild(taskActionsEl);
+      
+        // add entire list item to list
+        if (tasks[i].status === "to do") {
+        tasksToDoEl.appendChild(listItemEl);
+        }
+        else if (tasks[i].status === "in progress")
+        tasksInProgressEl.appendChild(listItemEl)
+        else {
+            tasksCompletedEl.appendChild(listItemEl)
+        }
+        taskIdCounter++
+    }
+saveTasks()
+}
 pageContentEl.addEventListener("click", taskButtonHandler);
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+loadTasks();
